@@ -1,0 +1,657 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>WOW ФАКТЫ</title>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;700;900&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+
+:root {
+  --bg: #08090f;
+  --card-h: min(78vh, 560px);
+}
+
+body {
+  background: var(--bg);
+  min-height: 100dvh;
+  font-family: 'Manrope', sans-serif;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ── HEADER ── */
+header {
+  width: 100%;
+  max-width: 480px;
+  padding: 18px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  z-index: 10;
+  flex-shrink: 0;
+}
+.logo {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 15px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  background: linear-gradient(135deg, #fff 0%, #aaa 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+.logo span { color: #ff4d6d; -webkit-text-fill-color: #ff4d6d; }
+
+.lang-toggle {
+  display: flex;
+  background: rgba(255,255,255,.06);
+  border-radius: 30px;
+  padding: 3px;
+  gap: 2px;
+}
+.lang-btn {
+  background: none; border: none;
+  font-family: 'Manrope', sans-serif;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 1px;
+  color: rgba(255,255,255,.4);
+  padding: 6px 14px;
+  border-radius: 24px;
+  cursor: pointer;
+  transition: .2s;
+}
+.lang-btn.active {
+  background: #fff;
+  color: #000;
+}
+
+/* ── COUNTER ── */
+.counter-bar {
+  width: 100%;
+  max-width: 480px;
+  padding: 0 20px 8px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+}
+.counter-num {
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,.25);
+  letter-spacing: 2px;
+  white-space: nowrap;
+}
+.progress-track {
+  flex: 1;
+  height: 2px;
+  background: rgba(255,255,255,.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #ff4d6d, #ff9a3c);
+  border-radius: 2px;
+  transition: width .4s ease;
+  width: 0%;
+}
+
+/* ── STACK AREA ── */
+.stack {
+  position: relative;
+  width: 100%;
+  max-width: 480px;
+  height: var(--card-h);
+  flex-shrink: 0;
+  padding: 0 16px;
+}
+
+/* ── CARD ── */
+.card {
+  position: absolute;
+  inset: 0;
+  margin: 0 16px;
+  border-radius: 28px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  padding: 28px 26px 26px;
+  overflow: hidden;
+  cursor: grab;
+  touch-action: none;
+  transition: transform .08s ease, box-shadow .2s;
+  will-change: transform;
+  transform-origin: bottom center;
+}
+.card:active { cursor: grabbing; }
+
+/* Background layers */
+.card-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 28px;
+  z-index: 0;
+}
+.card-noise {
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.08'/%3E%3C/svg%3E");
+  background-size: 180px;
+  border-radius: 28px;
+  z-index: 1;
+  pointer-events: none;
+  mix-blend-mode: overlay;
+}
+.card-gradient {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, transparent 30%, rgba(0,0,0,.75) 100%);
+  border-radius: 28px;
+  z-index: 2;
+}
+
+/* Content */
+.card-content {
+  position: relative;
+  z-index: 3;
+}
+.card-emoji {
+  font-size: 44px;
+  line-height: 1;
+  margin-bottom: 14px;
+  display: block;
+  filter: drop-shadow(0 4px 12px rgba(0,0,0,.5));
+}
+.card-category {
+  font-size: 9px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: rgba(255,255,255,.55);
+  margin-bottom: 10px;
+}
+.card-title {
+  font-family: 'Unbounded', sans-serif;
+  font-size: clamp(17px, 4.5vw, 22px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.25;
+  margin-bottom: 12px;
+  text-shadow: 0 2px 12px rgba(0,0,0,.5);
+}
+.card-body {
+  font-size: clamp(13px, 3.5vw, 15px);
+  color: rgba(255,255,255,.82);
+  line-height: 1.65;
+  font-weight: 500;
+}
+.card-num {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 11px;
+  color: rgba(255,255,255,.3);
+  z-index: 3;
+}
+
+/* Swipe indicators */
+.swipe-label {
+  position: absolute;
+  top: 36px;
+  font-family: 'Unbounded', sans-serif;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 3px;
+  padding: 8px 18px;
+  border-radius: 12px;
+  border: 3px solid;
+  opacity: 0;
+  z-index: 10;
+  pointer-events: none;
+  transition: opacity .1s;
+}
+.swipe-label.next { left: 20px; color: #4ade80; border-color: #4ade80; transform: rotate(-12deg); }
+.swipe-label.skip { right: 20px; color: #f87171; border-color: #f87171; transform: rotate(12deg); }
+
+/* Behind cards (stack effect) */
+.card.behind-1 {
+  transform: scale(.94) translateY(14px);
+  opacity: .7;
+  pointer-events: none;
+  z-index: 1;
+}
+.card.behind-2 {
+  transform: scale(.88) translateY(28px);
+  opacity: .4;
+  pointer-events: none;
+  z-index: 0;
+}
+.card.front {
+  z-index: 5;
+}
+
+/* ── ACTIONS ── */
+.actions {
+  width: 100%;
+  max-width: 480px;
+  padding: 16px 20px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  flex-shrink: 0;
+}
+.action-btn {
+  width: 58px; height: 58px;
+  border-radius: 50%;
+  border: none;
+  font-size: 22px;
+  cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: transform .15s, box-shadow .15s;
+}
+.action-btn:active { transform: scale(.9); }
+.btn-skip { background: rgba(248,113,113,.15); box-shadow: 0 0 0 1px rgba(248,113,113,.3); }
+.btn-skip:hover { box-shadow: 0 0 0 1px rgba(248,113,113,.6); }
+.btn-next { background: rgba(74,222,128,.15); box-shadow: 0 0 0 1px rgba(74,222,128,.3); width: 70px; height: 70px; font-size: 26px; }
+.btn-next:hover { box-shadow: 0 0 0 1px rgba(74,222,128,.6); }
+.btn-share { background: rgba(96,165,250,.15); box-shadow: 0 0 0 1px rgba(96,165,250,.3); }
+
+/* ── HINT ── */
+.hint {
+  font-size: 10px;
+  color: rgba(255,255,255,.2);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  text-align: center;
+  padding: 6px 0 12px;
+  flex-shrink: 0;
+}
+
+/* ── LOADING ── */
+.loading-card {
+  position: absolute;
+  inset: 0;
+  margin: 0 16px;
+  border-radius: 28px;
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.08);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  z-index: 20;
+}
+.loading-spinner {
+  width: 40px; height: 40px;
+  border: 3px solid rgba(255,255,255,.1);
+  border-top-color: #ff4d6d;
+  border-radius: 50%;
+  animation: spin .8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+.loading-text {
+  font-size: 12px;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+}
+
+/* ── TOAST ── */
+.toast {
+  position: fixed;
+  bottom: 30px;
+  left: 50%;
+  transform: translateX(-50%) translateY(80px);
+  background: rgba(255,255,255,.12);
+  backdrop-filter: blur(12px);
+  border: 1px solid rgba(255,255,255,.15);
+  border-radius: 40px;
+  padding: 10px 22px;
+  font-size: 13px;
+  color: #fff;
+  font-weight: 600;
+  z-index: 999;
+  transition: transform .3s cubic-bezier(.34,1.56,.64,1);
+  white-space: nowrap;
+}
+.toast.show { transform: translateX(-50%) translateY(0); }
+
+/* Card color themes */
+.theme-0 .card-bg { background: linear-gradient(135deg, #1a0533 0%, #3d0b6b 50%, #1a0533 100%); }
+.theme-1 .card-bg { background: linear-gradient(135deg, #001a2c 0%, #003a5c 50%, #001020 100%); }
+.theme-2 .card-bg { background: linear-gradient(135deg, #1a0a00 0%, #4a1800 50%, #2a0500 100%); }
+.theme-3 .card-bg { background: linear-gradient(135deg, #001a10 0%, #003320 50%, #000d08 100%); }
+.theme-4 .card-bg { background: linear-gradient(135deg, #1a001a 0%, #3d003d 50%, #0d000d 100%); }
+.theme-5 .card-bg { background: linear-gradient(135deg, #0a1a00 0%, #1a3d00 50%, #050d00 100%); }
+.theme-6 .card-bg { background: linear-gradient(135deg, #1a1500 0%, #3d3000 50%, #0d0a00 100%); }
+.theme-7 .card-bg { background: linear-gradient(135deg, #00101a 0%, #00253d 50%, #00080d 100%); }
+
+@media (max-height: 700px) {
+  :root { --card-h: 65vh; }
+  .card-emoji { font-size: 32px; margin-bottom: 10px; }
+  .card { padding: 20px 20px 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">WOW<span>!</span>ФАКТЫ</div>
+  <div class="lang-toggle">
+    <button class="lang-btn active" data-lang="ru" onclick="setLang('ru')">RU</button>
+    <button class="lang-btn" data-lang="uz" onclick="setLang('uz')">UZ</button>
+  </div>
+</header>
+
+<div class="counter-bar">
+  <span class="counter-num" id="counterNum">0 / ∞</span>
+  <div class="progress-track"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="stack" id="stack">
+  <div class="loading-card" id="loadingCard">
+    <div class="loading-spinner"></div>
+    <div class="loading-text" id="loadingText">Генерируем факт...</div>
+  </div>
+</div>
+
+<div class="actions">
+  <button class="action-btn btn-skip" onclick="swipeCard('skip')" title="Пропустить">😐</button>
+  <button class="action-btn btn-next" onclick="swipeCard('next')" title="Следующий">⚡</button>
+  <button class="action-btn btn-share" onclick="shareCard()" title="Поделиться">📤</button>
+</div>
+
+<div class="hint" id="hintText">свайп влево / вправо · или нажми ⚡</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ─── STATE ────────────────────────────────────────────────
+let lang = 'ru';
+let totalSeen = 0;
+let cards = [];       // rendered card elements
+let facts = [];       // fetched facts queue
+let isFetching = false;
+let currentTheme = 0;
+
+const THEMES = 8;
+const QUEUE_MIN = 2; // refetch when queue falls below this
+
+// ─── TRANSLATIONS ─────────────────────────────────────────
+const T = {
+  ru: {
+    loading: 'Генерируем факт...',
+    hint: 'свайп влево / вправо · или нажми ⚡',
+    copied: '📋 Скопировано!',
+    counter: (n) => `${n} фактов прочитано`,
+    error: 'Ошибка. Пробуем снова...',
+  },
+  uz: {
+    loading: 'Fakt yaratilmoqda...',
+    hint: 'chapga / o\'ngga suring · yoki ⚡ bosing',
+    copied: '📋 Nusxalandi!',
+    counter: (n) => `${n} ta fakt o'qildi`,
+    error: 'Xatolik. Qayta urinmoqdamiz...',
+  }
+};
+
+// ─── PROMPTS ──────────────────────────────────────────────
+function buildPrompt() {
+  const categories = [
+    'космос и вселенная', 'богатейшие люди мира', 'квантовая физика', 
+    'животные и природа', 'рекорды и достижения', 'технологии будущего',
+    'история цивилизаций', 'человеческий мозг и психология', 'океаны и глубины',
+    'экстремальные факты о числах', 'еда и кулинария', 'архитектура и инженерия',
+    'медицина и биология', 'спорт и рекорды', 'деньги и экономика',
+    'загадки природы', 'знаменитые личности', 'невероятные совпадения',
+  ];
+  const cat = categories[Math.floor(Math.random() * categories.length)];
+  const seed = Math.floor(Math.random() * 1000000);
+
+  if (lang === 'ru') {
+    return `Ты генератор невероятных WOW-фактов. Seed: ${seed}. Категория: "${cat}".
+
+Сгенерируй 1 потрясающий факт который заставит человека сказать "ВАУ!" и захотеть узнать больше.
+
+Факт должен быть:
+- Конкретным с реальными числами/датами/именами
+- Неожиданным и шокирующим
+- Абсолютно правдивым
+- О категории: ${cat}
+
+Ответь СТРОГО в JSON (без markdown, без \`\`\`):
+{
+  "emoji": "одно подходящее эмодзи",
+  "category": "короткое название категории (2-3 слова)",
+  "title": "захватывающий заголовок (5-10 слов)",
+  "body": "сам факт, 2-4 предложения, конкретные цифры и детали которые шокируют"
+}`;
+  } else {
+    return `Siz hayratlanarli WOW-faktlar generatorisiniz. Seed: ${seed}. Kategoriya: "${cat}".
+
+1 ta hayratlanarli fakt yozing, odam "VOY!" deb qolsin va ko'proq bilishni xohlasin.
+
+Fakt:
+- Aniq raqamlar/sanalar/ismlar bilan
+- Kutilmagan va hayratlanarli
+- To'liq haqiqiy
+- Kategoriya: ${cat}
+
+FAQAT JSON formatida javob bering (markdown yo'q, \`\`\` yo'q):
+{
+  "emoji": "bitta mos emoji",
+  "category": "qisqa kategoriya nomi (2-3 so'z)",
+  "title": "qiziqarli sarlavha (5-10 so'z)",
+  "body": "faktning o'zi, 2-4 jumla, hayratlanarli aniq raqamlar va tafsilotlar"
+}`;
+  }
+}
+
+// ─── API CALL ─────────────────────────────────────────────
+async function fetchFact() {
+  const response = await fetch('https://api.anthropic.com/v1/messages', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 1000,
+      messages: [{ role: 'user', content: buildPrompt() }]
+    })
+  });
+  const data = await response.json();
+  const text = data.content.map(b => b.text || '').join('');
+  const clean = text.replace(/```json|```/gi, '').trim();
+  const json = JSON.parse(clean);
+  return json;
+}
+
+// ─── QUEUE ────────────────────────────────────────────────
+async function fillQueue() {
+  if (isFetching) return;
+  isFetching = true;
+  try {
+    // Fetch 2 facts in parallel
+    const [f1, f2] = await Promise.allSettled([fetchFact(), fetchFact()]);
+    if (f1.status === 'fulfilled') facts.push(f1.value);
+    if (f2.status === 'fulfilled') facts.push(f2.value);
+  } catch(e) {}
+  isFetching = false;
+  renderStack();
+}
+
+// ─── RENDER STACK ─────────────────────────────────────────
+function renderStack() {
+  const stack = document.getElementById('stack');
+  const loading = document.getElementById('loadingCard');
+
+  // Remove old cards
+  stack.querySelectorAll('.card').forEach(c => c.remove());
+  cards = [];
+
+  if (facts.length === 0) {
+    loading.style.display = 'flex';
+    return;
+  }
+  loading.style.display = 'none';
+
+  // Render up to 3 cards (stack effect)
+  const visible = Math.min(facts.length, 3);
+  for (let i = visible - 1; i >= 0; i--) {
+    const card = buildCard(facts[i], i);
+    if (i === 0) card.classList.add('front');
+    else if (i === 1) card.classList.add('behind-1');
+    else card.classList.add('behind-2');
+    stack.appendChild(card);
+    cards.unshift(card);
+  }
+
+  // Attach drag to front card
+  if (cards[0]) attachDrag(cards[0]);
+}
+
+function buildCard(fact, idx) {
+  const theme = (currentTheme + idx) % THEMES;
+  const card = document.createElement('div');
+  card.className = `card theme-${theme}`;
+  card.innerHTML = `
+    <div class="card-bg"></div>
+    <div class="card-noise"></div>
+    <div class="card-gradient"></div>
+    <span class="swipe-label next">ВАУ! 🤩</span>
+    <span class="swipe-label skip">СКИП 😐</span>
+    <div class="card-num">#${totalSeen + idx + 1}</div>
+    <div class="card-content">
+      <span class="card-emoji">${fact.emoji || '✨'}</span>
+      <div class="card-category">${fact.category || ''}</div>
+      <div class="card-title">${fact.title || ''}</div>
+      <div class="card-body">${fact.body || ''}</div>
+    </div>
+  `;
+  return card;
+}
+
+// ─── DRAG / SWIPE ─────────────────────────────────────────
+function attachDrag(card) {
+  let startX = 0, startY = 0, curX = 0, curY = 0;
+  let dragging = false;
+
+  const onStart = (x, y) => {
+    startX = x; startY = y; dragging = true;
+    card.style.transition = 'none';
+  };
+  const onMove = (x, y) => {
+    if (!dragging) return;
+    curX = x - startX; curY = y - startY;
+    const rot = curX * 0.06;
+    card.style.transform = `translateX(${curX}px) translateY(${curY * 0.3}px) rotate(${rot}deg)`;
+    // Labels
+    const nextLabel = card.querySelector('.swipe-label.next');
+    const skipLabel = card.querySelector('.swipe-label.skip');
+    if (curX > 40) { nextLabel.style.opacity = Math.min((curX - 40) / 60, 1); skipLabel.style.opacity = 0; }
+    else if (curX < -40) { skipLabel.style.opacity = Math.min((-curX - 40) / 60, 1); nextLabel.style.opacity = 0; }
+    else { nextLabel.style.opacity = 0; skipLabel.style.opacity = 0; }
+  };
+  const onEnd = () => {
+    if (!dragging) return;
+    dragging = false;
+    card.style.transition = '';
+    if (curX > 90) swipeCard('next');
+    else if (curX < -90) swipeCard('skip');
+    else { card.style.transform = ''; card.querySelector('.swipe-label.next').style.opacity = 0; card.querySelector('.swipe-label.skip').style.opacity = 0; }
+    curX = 0; curY = 0;
+  };
+
+  card.addEventListener('mousedown', e => onStart(e.clientX, e.clientY));
+  window.addEventListener('mousemove', e => onMove(e.clientX, e.clientY));
+  window.addEventListener('mouseup', onEnd);
+
+  card.addEventListener('touchstart', e => { const t = e.touches[0]; onStart(t.clientX, t.clientY); }, { passive: true });
+  window.addEventListener('touchmove', e => { const t = e.touches[0]; onMove(t.clientX, t.clientY); }, { passive: true });
+  window.addEventListener('touchend', onEnd);
+}
+
+// ─── SWIPE ACTION ─────────────────────────────────────────
+function swipeCard(dir) {
+  if (cards.length === 0) return;
+  const front = cards[0];
+  if (!front) return;
+
+  // Animate out
+  const tx = dir === 'next' ? window.innerWidth * 1.2 : -window.innerWidth * 1.2;
+  front.style.transition = 'transform .35s cubic-bezier(.55,0,.45,1), opacity .35s';
+  front.style.transform = `translateX(${tx}px) rotate(${dir === 'next' ? 20 : -20}deg)`;
+  front.style.opacity = '0';
+
+  setTimeout(() => { front.remove(); }, 360);
+
+  // Consume fact
+  facts.shift();
+  totalSeen++;
+  currentTheme = (currentTheme + 1) % THEMES;
+
+  // Update counter
+  document.getElementById('counterNum').textContent = T[lang].counter(totalSeen);
+  const pct = Math.min((totalSeen / 1000000) * 100, 100);
+  document.getElementById('progressFill').style.width = (pct + 0.02) + '%';
+
+  cards.shift();
+
+  // Refetch if running low
+  if (facts.length < QUEUE_MIN) fillQueue();
+
+  // Re-render remaining stack
+  setTimeout(() => renderStack(), 50);
+}
+
+// ─── SHARE ────────────────────────────────────────────────
+function shareCard() {
+  if (!facts[0]) return;
+  const f = facts[0];
+  const text = `${f.emoji} ${f.title}\n\n${f.body}\n\n— WOW!ФАКТЫ`;
+  if (navigator.share) {
+    navigator.share({ text }).catch(() => {});
+  } else {
+    navigator.clipboard.writeText(text).then(() => showToast(T[lang].copied));
+  }
+}
+
+// ─── LANG ────────────────────────────────────────────────
+function setLang(l) {
+  lang = l;
+  document.querySelectorAll('.lang-btn').forEach(b => b.classList.toggle('active', b.dataset.lang === l));
+  document.getElementById('hintText').textContent = T[lang].hint;
+  document.getElementById('loadingText').textContent = T[lang].loading;
+  // Refetch in new lang
+  facts = [];
+  cards = [];
+  document.getElementById('stack').querySelectorAll('.card').forEach(c => c.remove());
+  document.getElementById('loadingCard').style.display = 'flex';
+  fillQueue();
+}
+
+// ─── TOAST ────────────────────────────────────────────────
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+// ─── KEYBOARD ────────────────────────────────────────────
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === ' ') swipeCard('next');
+  if (e.key === 'ArrowLeft') swipeCard('skip');
+});
+
+// ─── INIT ────────────────────────────────────────────────
+fillQueue();
+</script>
+</body>
+</html>
